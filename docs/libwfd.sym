@@ -1,0 +1,22 @@
+LIBWFD_1 {
+global:
+	wfd_rtsp_tokenize;
+
+	wfd_rtsp_method_get_name;
+	wfd_rtsp_method_from_name;
+	wfd_rtsp_status_is_valid;
+	wfd_rtsp_status_get_base;
+	wfd_rtsp_status_get_description;
+	wfd_rtsp_header_get_name;
+	wfd_rtsp_header_from_name;
+	wfd_rtsp_header_from_name_n;
+
+	wfd_rtsp_decoder_new;
+	wfd_rtsp_decoder_free;
+	wfd_rtsp_decoder_reset;
+	wfd_rtsp_decoder_set_data;
+	wfd_rtsp_decoder_get_data;
+	wfd_rtsp_decoder_feed;
+local:
+	*;
+};
