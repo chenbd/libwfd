@@ -6,7 +6,7 @@
 AC_PREREQ(2.68)
 
 AC_INIT([libwfd],
-        [3],
+        [1],
         [http://www.freedesktop.org/wiki/Software/miraclecast],
         [libwfd],
         [http://www.freedesktop.org/wiki/Software/miraclecast])
