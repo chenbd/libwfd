@@ -325,7 +325,6 @@ _shl_public_
 int wfd_wpa_ctrl_open(struct wfd_wpa_ctrl *wpa, const char *ctrl_path)
 {
 	int r;
-	int64_t t;
 
 	if (!wpa || !ctrl_path)
 		return -EINVAL;
@@ -356,8 +355,7 @@ int wfd_wpa_ctrl_open(struct wfd_wpa_ctrl *wpa, const char *ctrl_path)
 	return 0;
 
 err_ev:
-	t = 0;
-	wpa_request(wpa->ev_fd, "DETACH", 6, NULL, NULL, &t, &wpa->mask);
+	wpa_request_ok(wpa->ev_fd, "DETACH", 6, NULL, &wpa->mask);
 	close_socket(wpa, wpa->ev_fd, wpa->ev_name);
 	wpa->ev_fd = -1;
 err_req:
@@ -371,13 +369,10 @@ err_timer:
 _shl_public_
 void wfd_wpa_ctrl_close(struct wfd_wpa_ctrl *wpa)
 {
-	int64_t t;
-
 	if (!wpa || !wfd_wpa_ctrl_is_open(wpa))
 		return;
 
-	t = 0;
-	wpa_request(wpa->ev_fd, "DETACH", 6, NULL, NULL, &t, &wpa->mask);
+	wpa_request_ok(wpa->ev_fd, "DETACH", 6, NULL, &wpa->mask);
 
 	close_socket(wpa, wpa->ev_fd, wpa->ev_name);
 	wpa->ev_fd = -1;
