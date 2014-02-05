@@ -36,7 +36,6 @@ pkgconfig_DATA =
 TPHONY =
 
 TESTS =
-MEMTESTS =
 check_PROGRAMS =
 lib_LTLIBRARIES =
 noinst_LTLIBRARIES =
