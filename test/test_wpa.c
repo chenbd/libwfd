@@ -40,6 +40,7 @@ static const char *event_list[] = {
 	[WFD_WPA_EVENT_AP_STA_CONNECTED]		= "AP-STA-CONNECTED 00:00:00:00:00:00",
 	[WFD_WPA_EVENT_AP_STA_DISCONNECTED]		= "AP-STA-DISCONNECTED 00:00:00:00:00:00",
 	[WFD_WPA_EVENT_P2P_DEVICE_FOUND]		= "P2P-DEVICE-FOUND 00:00:00:00:00:00 name=some-name",
+	[WFD_WPA_EVENT_P2P_DEVICE_LOST]			= "P2P-DEVICE-LOST p2p_dev_addr=00:00:00:00:00:00",
 	[WFD_WPA_EVENT_P2P_FIND_STOPPED]		= "P2P-FIND-STOPPED",
 	[WFD_WPA_EVENT_P2P_GO_NEG_REQUEST]		= "P2P-GO-NEG-REQUEST",
 	[WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS]		= "P2P-GO-NEG-SUCCESS role=GO peer_dev=00:00:00:00:00:00",
@@ -123,6 +124,12 @@ START_TEST(test_wpa_parser_payload)
 	ck_assert(ev.raw != NULL);
 	ck_assert(!strcmp(ev.p.p2p_device_found.peer_mac, "0:0:0:0:0:0"));
 	ck_assert(!strcmp(ev.p.p2p_device_found.name, "some-name\\'"));
+
+	parse(&ev, "<4>P2P-DEVICE-LOST dummy=sth p2p_dev_addr=0:0:0:0:0:0");
+	ck_assert(ev.priority == WFD_WPA_EVENT_P_ERROR);
+	ck_assert(ev.type == WFD_WPA_EVENT_P2P_DEVICE_LOST);
+	ck_assert(ev.raw != NULL);
+	ck_assert(!strcmp(ev.p.p2p_device_lost.peer_mac, "0:0:0:0:0:0"));
 
 	parse(&ev, "<4>P2P-PROV-DISC-SHOW-PIN 0:0:0:0:0:0 1234567890");
 	ck_assert(ev.priority == WFD_WPA_EVENT_P_ERROR);

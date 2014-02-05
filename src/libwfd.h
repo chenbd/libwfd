@@ -558,6 +558,7 @@ enum wfd_wpa_event_type {
 	WFD_WPA_EVENT_AP_STA_CONNECTED,
 	WFD_WPA_EVENT_AP_STA_DISCONNECTED,
 	WFD_WPA_EVENT_P2P_DEVICE_FOUND,
+	WFD_WPA_EVENT_P2P_DEVICE_LOST,
 	WFD_WPA_EVENT_P2P_FIND_STOPPED,
 	WFD_WPA_EVENT_P2P_GO_NEG_REQUEST,
 	WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS,
@@ -611,6 +612,10 @@ struct wfd_wpa_event {
 			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
 			char *name;
 		} p2p_device_found;
+
+		struct wfd_wpa_event_p2p_device_lost {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} p2p_device_lost;
 
 		struct wfd_wpa_event_p2p_go_neg_success {
 			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];

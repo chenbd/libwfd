@@ -81,6 +81,7 @@ static const struct event_type {
 	EVENT("AP-STA-CONNECTED", AP_STA_CONNECTED),
 	EVENT("AP-STA-DISCONNECTED", AP_STA_DISCONNECTED),
 	EVENT("P2P-DEVICE-FOUND", P2P_DEVICE_FOUND),
+	EVENT("P2P-DEVICE-LOST", P2P_DEVICE_LOST),
 	EVENT("P2P-FIND-STOPPED", P2P_FIND_STOPPED),
 	EVENT("P2P-GO-NEG-FAILURE", P2P_GO_NEG_FAILURE),
 	EVENT("P2P-GO-NEG-REQUEST", P2P_GO_NEG_REQUEST),
@@ -269,6 +270,29 @@ static int parse_p2p_device_found(struct wfd_wpa_event *ev,
 	}
 
 	return -EINVAL;
+}
+
+static int parse_p2p_device_lost(struct wfd_wpa_event *ev,
+				 char *tokens, size_t num)
+{
+	int r;
+	size_t i;
+
+	if (num < 1)
+		return -EINVAL;
+
+	for (i = 0; i < num; ++i, tokens += strlen(tokens) + 1) {
+		if (strncmp(tokens, "p2p_dev_addr=", 13))
+			continue;
+
+		r = parse_mac(ev->p.p2p_device_lost.peer_mac, &tokens[13]);
+		if (r < 0)
+			return r;
+
+		return 0;
+	}
+
+	return 0;
 }
 
 static int parse_p2p_go_neg_success(struct wfd_wpa_event *ev,
@@ -493,6 +517,9 @@ int wfd_wpa_event_parse(struct wfd_wpa_event *ev, const char *event)
 		break;
 	case WFD_WPA_EVENT_P2P_DEVICE_FOUND:
 		r = parse_p2p_device_found(ev, tokens, num);
+		break;
+	case WFD_WPA_EVENT_P2P_DEVICE_LOST:
+		r = parse_p2p_device_lost(ev, tokens, num);
 		break;
 	case WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS:
 		r = parse_p2p_go_neg_success(ev, tokens, num);
