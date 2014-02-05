@@ -511,6 +511,150 @@ struct wfd_ie_sub_alt_mac {
 /** @} */
 
 /**
+ * @defgroup wfd_wpa WPA-Supplicant API
+ * Helper API to deal with wpa_supplicant for WFD devices
+ *
+ * On linux wpa_supplicant is the de-facto standard for wifi-handling. It
+ * provides a standard-compiant supplicant implementation with a custom API for
+ * applications. This API implements helpers to deal with this daemon and get
+ * wifi-P2P connections for WFD working.
+ *
+ * @{
+ */
+
+/* wpa ctrl */
+
+struct wfd_wpa_ctrl;
+
+typedef void (*wfd_wpa_ctrl_event_t) (struct wfd_wpa_ctrl *wpa, void *data,
+				      void *buf, size_t len);
+
+int wfd_wpa_ctrl_new(wfd_wpa_ctrl_event_t event_fn, void *data,
+		     struct wfd_wpa_ctrl **out);
+void wfd_wpa_ctrl_ref(struct wfd_wpa_ctrl *wpa);
+void wfd_wpa_ctrl_unref(struct wfd_wpa_ctrl *wpa);
+
+void wfd_wpa_ctrl_set_data(struct wfd_wpa_ctrl *wpa, void *data);
+void *wfd_wpa_ctrl_get_data(struct wfd_wpa_ctrl *wpa);
+
+int wfd_wpa_ctrl_open(struct wfd_wpa_ctrl *wpa, const char *ctrl_path);
+void wfd_wpa_ctrl_close(struct wfd_wpa_ctrl *wpa);
+bool wfd_wpa_ctrl_is_open(struct wfd_wpa_ctrl *wpa);
+
+int wfd_wpa_ctrl_get_fd(struct wfd_wpa_ctrl *wpa);
+void wfd_wpa_ctrl_set_sigmask(struct wfd_wpa_ctrl *wpa, const sigset_t *mask);
+int wfd_wpa_ctrl_dispatch(struct wfd_wpa_ctrl *wpa, int timeout);
+
+int wfd_wpa_ctrl_request(struct wfd_wpa_ctrl *wpa, const void *cmd,
+			 size_t cmd_len, void *reply, size_t *reply_len,
+			 int timeout);
+int wfd_wpa_ctrl_request_ok(struct wfd_wpa_ctrl *wpa, const void *cmd,
+			    size_t cmd_len, int timeout);
+
+/* wpa parser */
+
+enum wfd_wpa_event_type {
+	WFD_WPA_EVENT_UNKNOWN,
+	WFD_WPA_EVENT_AP_STA_CONNECTED,
+	WFD_WPA_EVENT_AP_STA_DISCONNECTED,
+	WFD_WPA_EVENT_P2P_DEVICE_FOUND,
+	WFD_WPA_EVENT_P2P_FIND_STOPPED,
+	WFD_WPA_EVENT_P2P_GO_NEG_REQUEST,
+	WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS,
+	WFD_WPA_EVENT_P2P_GO_NEG_FAILURE,
+	WFD_WPA_EVENT_P2P_GROUP_FORMATION_SUCCESS,
+	WFD_WPA_EVENT_P2P_GROUP_FORMATION_FAILURE,
+	WFD_WPA_EVENT_P2P_GROUP_STARTED,
+	WFD_WPA_EVENT_P2P_GROUP_REMOVED,
+	WFD_WPA_EVENT_P2P_PROV_DISC_SHOW_PIN,
+	WFD_WPA_EVENT_P2P_PROV_DISC_ENTER_PIN,
+	WFD_WPA_EVENT_P2P_PROV_DISC_PBC_REQ,
+	WFD_WPA_EVENT_P2P_PROV_DISC_PBC_RESP,
+	WFD_WPA_EVENT_P2P_SERV_DISC_REQ,
+	WFD_WPA_EVENT_P2P_SERV_DISC_RESP,
+	WFD_WPA_EVENT_P2P_INVITATION_RECEIVED,
+	WFD_WPA_EVENT_P2P_INVITATION_RESULT,
+	WFD_WPA_EVENT_COUNT,
+};
+
+enum wfd_wpa_event_priority {
+	WFD_WPA_EVENT_P_MSGDUMP,
+	WFD_WPA_EVENT_P_DEBUG,
+	WFD_WPA_EVENT_P_INFO,
+	WFD_WPA_EVENT_P_WARNING,
+	WFD_WPA_EVENT_P_ERROR,
+	WFD_WPA_EVENT_P_COUNT
+};
+
+enum wfd_wpa_event_role {
+	WFD_WPA_EVENT_ROLE_GO,
+	WFD_WPA_EVENT_ROLE_CLIENT,
+};
+
+#define WFD_WPA_EVENT_MAC_STRLEN 18
+
+struct wfd_wpa_event {
+	unsigned int type;
+	unsigned int priority;
+	char *raw;
+
+	union wfd_wpa_event_payload {
+		struct wfd_wpa_event_ap_sta_connected {
+			char mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} ap_sta_connected;
+
+		struct wfd_wpa_event_ap_sta_disconnected {
+			char mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} ap_sta_disconnected;
+
+		struct wfd_wpa_event_p2p_device_found {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+			char *name;
+		} p2p_device_found;
+
+		struct wfd_wpa_event_p2p_go_neg_success {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+			unsigned int role;
+		} p2p_go_neg_success;
+
+		struct wfd_wpa_event_p2p_group_started {
+			char go_mac[WFD_WPA_EVENT_MAC_STRLEN];
+			unsigned int role;
+			char *ifname;
+		} p2p_group_started;
+
+		struct wfd_wpa_event_p2p_group_removed {
+			unsigned int role;
+			char *ifname;
+		} p2p_group_removed;
+
+		struct wfd_wpa_event_p2p_prov_disc_show_pin {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+			char *pin;
+		} p2p_prov_disc_show_pin;
+
+		struct wfd_wpa_event_p2p_prov_disc_enter_pin {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} p2p_prov_disc_enter_pin;
+
+		struct wfd_wpa_event_p2p_prov_disc_pbc_req {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} p2p_prov_disc_pbc_req;
+
+		struct wfd_wpa_event_p2p_prov_disc_pbc_resp {
+			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+		} p2p_prov_disc_pbc_resp;
+	} p;
+};
+
+void wfd_wpa_event_init(struct wfd_wpa_event *ev);
+void wfd_wpa_event_reset(struct wfd_wpa_event *ev);
+int wfd_wpa_event_parse(struct wfd_wpa_event *ev, const char *event);
+const char *wfd_wpa_event_name(unsigned int type);
+
+/** @} */
+
+/**
  * @defgroup wfd_rtsp Wifi-Display API for RTSP
  * API for the Wifi-Display specification regarding RTSP
  *

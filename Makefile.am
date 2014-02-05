@@ -98,7 +98,9 @@ pkgconfig_DATA += docs/libwfd.pc
 libwfd_la_SOURCES = \
 	src/libwfd.h \
 	src/rtsp_decoder.c \
-	src/rtsp_tokenizer.c
+	src/rtsp_tokenizer.c \
+	src/wpa_ctrl.c \
+	src/wpa_parser.c
 libwfd_la_CPPFLAGS = $(AM_CPPFLAGS)
 libwfd_la_LIBADD = libshl.la
 EXTRA_libwfd_la_DEPENDENCIES = $(top_srcdir)/docs/libwfd.sym
@@ -112,7 +114,8 @@ libwfd_la_LDFLAGS = \
 #
 
 tests = \
-	test_rtsp
+	test_rtsp \
+	test_wpa
 
 if BUILD_HAVE_CHECK
 check_PROGRAMS += $(tests)
@@ -135,6 +138,11 @@ test_rtsp_SOURCES = test/test_rtsp.c $(test_sources)
 test_rtsp_CPPFLAGS = $(test_cflags)
 test_rtsp_LDADD = $(test_libs)
 test_rtsp_LDFLAGS = $(test_lflags)
+
+test_wpa_SOURCES = test/test_wpa.c $(test_sources)
+test_wpa_CPPFLAGS = $(test_cflags)
+test_wpa_LDADD = $(test_libs)
+test_wpa_LDFLAGS = $(test_lflags)
 
 #
 # Phony targets

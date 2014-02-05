@@ -17,6 +17,25 @@ global:
 	wfd_rtsp_decoder_set_data;
 	wfd_rtsp_decoder_get_data;
 	wfd_rtsp_decoder_feed;
+
+	wfd_wpa_ctrl_new;
+	wfd_wpa_ctrl_ref;
+	wfd_wpa_ctrl_unref;
+	wfd_wpa_ctrl_set_data;
+	wfd_wpa_ctrl_get_data;
+	wfd_wpa_ctrl_open;
+	wfd_wpa_ctrl_close;
+	wfd_wpa_ctrl_is_open;
+	wfd_wpa_ctrl_get_fd;
+	wfd_wpa_ctrl_set_sigmask;
+	wfd_wpa_ctrl_dispatch;
+	wfd_wpa_ctrl_request;
+	wfd_wpa_ctrl_request_ok;
+
+	wfd_wpa_event_init;
+	wfd_wpa_event_reset;
+	wfd_wpa_event_parse;
+	wfd_wpa_event_name;
 local:
 	*;
 };

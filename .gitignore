@@ -25,3 +25,4 @@ m4/
 stamp-h1
 test-suite.log
 test_rtsp
+test_wpa
