@@ -668,7 +668,7 @@ static int timed_recv(int fd, void *reply, size_t *reply_len, int64_t *timeout,
 				/* We ignore any event messages ('<') on this
 				 * fd as they're handled via a separate pipe.
 				 * Return the received reply unchanged. */
-				*reply_len = l;
+				*reply_len = (l > *reply_len) ? *reply_len : l;
 				done = true;
 			}
 		}
@@ -696,7 +696,7 @@ static int wpa_request(int fd, const void *cmd, size_t cmd_len,
 	int64_t *t, t1 = -1, max;
 	int r;
 
-	if (!cmd || !cmd_len || !reply || !reply_len)
+	if (!cmd || !cmd_len)
 		return -EINVAL;
 	if (fd < 0)
 		return -ENODEV;
@@ -709,6 +709,9 @@ static int wpa_request(int fd, const void *cmd, size_t cmd_len,
 		reply = buf;
 	if (!reply_len)
 		reply_len = &l;
+	if (*reply_len < 2)
+		return -EINVAL;
+	*reply_len -= 1;
 
 	/* use a maximum of 10s */
 	max = 10LL * 1000LL * 1000LL;
@@ -724,6 +727,7 @@ static int wpa_request(int fd, const void *cmd, size_t cmd_len,
 	r = timed_recv(fd, reply, reply_len, t, mask);
 	if (r < 0)
 		return r;
+	((char*)reply)[*reply_len] = 0;
 
 	return 0;
 }
@@ -778,6 +782,7 @@ int wfd_wpa_ctrl_request_ok(struct wfd_wpa_ctrl *wpa, const void *cmd,
 
 	if (!wpa)
 		return -EINVAL;
+
 	r = wfd_wpa_ctrl_request(wpa, cmd, cmd_len, buf, &l, timeout);
 	if (r < 0)
 		return r;
