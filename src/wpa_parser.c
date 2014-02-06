@@ -474,7 +474,7 @@ int wfd_wpa_event_parse(struct wfd_wpa_event *ev, const char *event)
 
 		++t;
 		ev->priority = strtoul(event + 1, &end, 10);
-		if (ev->priority >= WFD_WPA_EVENT_P_COUNT ||
+		if (ev->priority >= WFD_WPA_EVENT_P_CNT ||
 		    end + 1 != t ||
 		    event[1] == '+' ||
 		    event[1] == '-')

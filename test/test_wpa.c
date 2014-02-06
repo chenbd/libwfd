@@ -32,7 +32,7 @@ static void parse(struct wfd_wpa_event *ev, const char *event)
 	wfd_wpa_event_init(ev);
 	r = wfd_wpa_event_parse(ev, event);
 	ck_assert_msg(!r, "cannot parse event %s", event);
-	ck_assert(ev->priority < WFD_WPA_EVENT_P_COUNT);
+	ck_assert(ev->priority < WFD_WPA_EVENT_P_CNT);
 }
 
 static const char *event_list[] = {
@@ -57,7 +57,7 @@ static const char *event_list[] = {
 	[WFD_WPA_EVENT_P2P_SERV_DISC_RESP]		= "P2P-SERV-DISC-RESP",
 	[WFD_WPA_EVENT_P2P_INVITATION_RECEIVED]		= "P2P-INVITATION-RECEIVED",
 	[WFD_WPA_EVENT_P2P_INVITATION_RESULT]		= "P2P-INVITATION-RESULT",
-	[WFD_WPA_EVENT_COUNT]				= NULL
+	[WFD_WPA_EVENT_CNT]				= NULL
 };
 
 START_TEST(test_wpa_parser)
@@ -71,7 +71,7 @@ START_TEST(test_wpa_parser)
 	parse(&ev, "asdf");
 	ck_assert(ev.type == WFD_WPA_EVENT_UNKNOWN);
 
-	for (i = 0; i < WFD_WPA_EVENT_COUNT; ++i) {
+	for (i = 0; i < WFD_WPA_EVENT_CNT; ++i) {
 		ck_assert_msg(event_list[i] != NULL, "event %d missing", i);
 		parse(&ev, event_list[i]);
 		ck_assert_msg(ev.type == i, "event %d invalid", i);
