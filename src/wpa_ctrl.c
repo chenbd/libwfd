@@ -720,8 +720,8 @@ static int wpa_request(int fd, const void *cmd, size_t cmd_len,
 		return -EINVAL;
 	*reply_len -= 1;
 
-	/* use a maximum of 10s */
-	max = 10LL * 1000LL * 1000LL;
+	/* use a maximum of 1s */
+	max = 1LL * 1000LL * 1000LL;
 	if (*t < 0 || *t > max)
 		*t = max;
 
