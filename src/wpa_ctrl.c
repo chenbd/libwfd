@@ -561,6 +561,8 @@ int wfd_wpa_ctrl_dispatch(struct wfd_wpa_ctrl *wpa, int timeout)
 		n = max;
 	}
 
+	wfd_wpa_ctrl_ref(wpa);
+
 	r = 0;
 	for (i = 0; i < n; ++i) {
 		e = &ev[i];
@@ -574,6 +576,8 @@ int wfd_wpa_ctrl_dispatch(struct wfd_wpa_ctrl *wpa, int timeout)
 		if (r < 0)
 			break;
 	}
+
+	wfd_wpa_ctrl_unref(wpa);
 
 	return r;
 }
