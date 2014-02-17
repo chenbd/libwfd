@@ -45,7 +45,7 @@ static const char *event_list[] = {
 	[WFD_WPA_EVENT_P2P_DEVICE_LOST]			= "P2P-DEVICE-LOST p2p_dev_addr=00:00:00:00:00:00",
 	[WFD_WPA_EVENT_P2P_FIND_STOPPED]		= "P2P-FIND-STOPPED",
 	[WFD_WPA_EVENT_P2P_GO_NEG_REQUEST]		= "P2P-GO-NEG-REQUEST",
-	[WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS]		= "P2P-GO-NEG-SUCCESS role=GO peer_dev=00:00:00:00:00:00",
+	[WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS]		= "P2P-GO-NEG-SUCCESS role=GO peer_dev=00:00:00:00:00:00 peer_iface=00:00:00:00:00:00",
 	[WFD_WPA_EVENT_P2P_GO_NEG_FAILURE]		= "P2P-GO-NEG-FAILURE",
 	[WFD_WPA_EVENT_P2P_GROUP_FORMATION_SUCCESS]	= "P2P-GROUP-FORMATION-SUCCESS",
 	[WFD_WPA_EVENT_P2P_GROUP_FORMATION_FAILURE]	= "P2P-GROUP-FORMATION-FAILURE",
@@ -140,11 +140,12 @@ START_TEST(test_wpa_parser_payload)
 	ck_assert(!strcmp(ev.p.p2p_prov_disc_show_pin.peer_mac, "0:0:0:0:0:0"));
 	ck_assert(!strcmp(ev.p.p2p_prov_disc_show_pin.pin, "1234567890"));
 
-	parse(&ev, "<4>P2P-GO-NEG-SUCCESS role=GO peer_dev=0:0:0:0:0:0");
+	parse(&ev, "<4>P2P-GO-NEG-SUCCESS role=GO peer_dev=0:0:0:0:0:0 peer_iface=ff:ff:ff:ff:ff:ff");
 	ck_assert(ev.priority == WFD_WPA_EVENT_P_ERROR);
 	ck_assert(ev.type == WFD_WPA_EVENT_P2P_GO_NEG_SUCCESS);
 	ck_assert(ev.raw != NULL);
 	ck_assert(!strcmp(ev.p.p2p_go_neg_success.peer_mac, "0:0:0:0:0:0"));
+	ck_assert(!strcmp(ev.p.p2p_go_neg_success.peer_iface, "ff:ff:ff:ff:ff:ff"));
 	ck_assert(ev.p.p2p_go_neg_success.role == WFD_WPA_EVENT_ROLE_GO);
 
 	parse(&ev, "<4>P2P-GROUP-STARTED p2p-wlan0-0 client go_dev_addr=0:0:0:0:0:0");

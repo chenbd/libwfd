@@ -622,6 +622,7 @@ struct wfd_wpa_event {
 
 		struct wfd_wpa_event_p2p_go_neg_success {
 			char peer_mac[WFD_WPA_EVENT_MAC_STRLEN];
+			char peer_iface[WFD_WPA_EVENT_MAC_STRLEN];
 			unsigned int role;
 		} p2p_go_neg_success;
 

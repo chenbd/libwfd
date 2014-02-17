@@ -302,9 +302,9 @@ static int parse_p2p_go_neg_success(struct wfd_wpa_event *ev,
 {
 	int r;
 	size_t i;
-	bool has_role = false, has_peer = false;
+	bool has_role = false, has_peer = false, has_iface = false;
 
-	if (num < 2)
+	if (num < 3)
 		return -EINVAL;
 
 	for (i = 0; i < num; ++i, tokens += strlen(tokens) + 1) {
@@ -324,10 +324,17 @@ static int parse_p2p_go_neg_success(struct wfd_wpa_event *ev,
 				return r;
 
 			has_peer = true;
+		} else if (!strncmp(tokens, "peer_iface=", 11)) {
+			r = parse_mac(ev->p.p2p_go_neg_success.peer_iface,
+				      &tokens[11]);
+			if (r < 0)
+				return r;
+
+			has_iface = true;
 		}
 	}
 
-	return (has_role && has_peer) ? 0 : -EINVAL;
+	return (has_role && has_peer && has_iface) ? 0 : -EINVAL;
 }
 
 static int parse_p2p_group_started(struct wfd_wpa_event *ev,
