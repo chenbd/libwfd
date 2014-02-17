@@ -37,8 +37,8 @@ static void parse(struct wfd_wpa_event *ev, const char *event)
 
 static const char *event_list[] = {
 	[WFD_WPA_EVENT_UNKNOWN]				= "",
-	[WFD_WPA_EVENT_AP_STA_CONNECTED]		= "AP-STA-CONNECTED 00:00:00:00:00:00",
-	[WFD_WPA_EVENT_AP_STA_DISCONNECTED]		= "AP-STA-DISCONNECTED 00:00:00:00:00:00",
+	[WFD_WPA_EVENT_AP_STA_CONNECTED]		= "AP-STA-CONNECTED 00:00:00:00:00:00 p2p_dev_addr=00:00:00:00:00:00",
+	[WFD_WPA_EVENT_AP_STA_DISCONNECTED]		= "AP-STA-DISCONNECTED 00:00:00:00:00:00 p2p_dev_addr=00:00:00:00:00:00",
 	[WFD_WPA_EVENT_CTRL_EVENT_SCAN_STARTED]		= "CTRL-EVENT-SCAN-STARTED",
 	[WFD_WPA_EVENT_CTRL_EVENT_TERMINATING]		= "CTRL-EVENT-TERMINATING",
 	[WFD_WPA_EVENT_P2P_DEVICE_FOUND]		= "P2P-DEVICE-FOUND 00:00:00:00:00:00 name=some-name",
@@ -83,7 +83,7 @@ START_TEST(test_wpa_parser)
 	ck_assert(ev.priority == WFD_WPA_EVENT_P_MSGDUMP);
 	ck_assert(ev.type == WFD_WPA_EVENT_AP_STA_CONNECTED);
 
-	parse(&ev, "<4>AP-STA-CONNECTED 0:0:0:0:0:0");
+	parse(&ev, "<4>AP-STA-CONNECTED 0:0:0:0:0:0 p2p_dev_addr=ff:ff:ff:ff:ff:ff");
 	ck_assert(ev.priority == WFD_WPA_EVENT_P_ERROR);
 	ck_assert(ev.type == WFD_WPA_EVENT_AP_STA_CONNECTED);
 

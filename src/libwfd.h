@@ -605,10 +605,12 @@ struct wfd_wpa_event {
 	union wfd_wpa_event_payload {
 		struct wfd_wpa_event_ap_sta_connected {
 			char mac[WFD_WPA_EVENT_MAC_STRLEN];
+			char iface[WFD_WPA_EVENT_MAC_STRLEN];
 		} ap_sta_connected;
 
 		struct wfd_wpa_event_ap_sta_disconnected {
 			char mac[WFD_WPA_EVENT_MAC_STRLEN];
+			char iface[WFD_WPA_EVENT_MAC_STRLEN];
 		} ap_sta_disconnected;
 
 		struct wfd_wpa_event_p2p_device_found {

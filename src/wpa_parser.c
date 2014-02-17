@@ -220,13 +220,25 @@ static int parse_ap_sta_connected(struct wfd_wpa_event *ev,
 				  char *tokens, size_t num)
 {
 	int r;
+	size_t i;
 
 	if (num < 1)
 		return -EINVAL;
 
-	r = parse_mac(ev->p.ap_sta_connected.mac, tokens);
+	r = parse_mac(ev->p.ap_sta_connected.iface, tokens);
 	if (r < 0)
 		return r;
+
+	for (i = 1; i < num; ++i, tokens += strlen(tokens) + 1) {
+		if (strncmp(tokens, "p2p_dev_addr=", 13))
+			continue;
+
+		r = parse_mac(ev->p.ap_sta_connected.mac, &tokens[13]);
+		if (r < 0)
+			return r;
+
+		return 0;
+	}
 
 	return 0;
 }
@@ -235,13 +247,25 @@ static int parse_ap_sta_disconnected(struct wfd_wpa_event *ev,
 				     char *tokens, size_t num)
 {
 	int r;
+	size_t i;
 
 	if (num < 1)
 		return -EINVAL;
 
-	r = parse_mac(ev->p.ap_sta_disconnected.mac, tokens);
+	r = parse_mac(ev->p.ap_sta_disconnected.iface, tokens);
 	if (r < 0)
 		return r;
+
+	for (i = 1; i < num; ++i, tokens += strlen(tokens) + 1) {
+		if (strncmp(tokens, "p2p_dev_addr=", 13))
+			continue;
+
+		r = parse_mac(ev->p.ap_sta_disconnected.mac, &tokens[13]);
+		if (r < 0)
+			return r;
+
+		return 0;
+	}
 
 	return 0;
 }
